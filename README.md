@@ -1,31 +1,29 @@
-# Smart Document Scanner & Analyzer
+# Smart Document Scanner \& Analyzer
 
-A command-line Computer Vision application that detects documents in photographs, extracts them using perspective correction, and performs comprehensive visual analysis including feature extraction and image segmentation.
+A command line Computer Vision application that includes document detection in photographs, document extraction with perspective correction, and extensive visual analysis in the form of feature extraction and image segmentation. 
 
-This project demonstrates real-world application of core Computer Vision concepts covered in CSE3010, including image preprocessing, edge detection, projective transformations, feature extraction (SIFT, ORB, HOG, Harris), and segmentation (K-Means, Watershed, Region Growing).
+This project is a real-world application encompassing the key Computer Vision concepts in CSE3010 such as image preprocessing, edge detection, projective transformations, feature extraction (SIFT, ORB, HOG, Harris), and segmentation (K-Means, Watershed, Region Growing).
 
----
+\---
 
 ## Table of Contents
 
-- [Problem Statement](#problem-statement)
-- [Project Architecture](#project-architecture)
-- [Setup Instructions](#setup-instructions)
-- [How to Run](#how-to-run)
-- [Pipeline Description](#pipeline-description)
-- [Course Concepts Applied](#course-concepts-applied)
-- [Output Examples](#output-examples)
-- [Project Structure](#project-structure)
+* [Problem Statement](#problem-statement)
+* [Project Architecture](#project-architecture)
+* [Setup Instructions](#setup-instructions)
+* [How to Run](#how-to-run)
+* [Pipeline Description](#pipeline-description)
+* [Course Concepts Applied](#course-concepts-applied)
+* [Output Examples](#output-examples)
+* [Project Structure](#project-structure)
 
----
+\---
 
 ## Problem Statement
 
-Millions of people photograph documents daily — receipts, notes, certificates, whiteboards — using smartphones. These photos typically suffer from perspective distortion, uneven lighting, and noisy backgrounds. Existing scanner apps solve this problem, but understanding *how* they work requires implementing the underlying Computer Vision pipeline from scratch.
+Each day hundreds of millions of people shoot documents – receipts, notes, certificates, whiteboards – with their smartphones. The photos are usually perspective-distorted, poorly-lit, and contain noise in the background. Existing scanner apps fix this issue, but to understand how they work, one has to build the underlying Computer Vision pipeline from scratch. 
 
-This project builds a complete document scanning and analysis tool from the ground up using classical CV techniques (no deep learning), demonstrating that fundamental algorithms from this course can solve a practical, everyday problem.
-
----
+This project develops a full document scanning and analysis tool from scratch using classical (no deep learning) CV techniques, proving that fundamental algorithms studied in this course can address a practical, everyday problem. ---
 
 ## Project Architecture
 
@@ -37,7 +35,7 @@ Input Image → Preprocessing → Edge Detection → Contour Detection → Persp
                                                               Segmentation (K-Means, Watershed, Text Detection)
 ```
 
----
+\---
 
 ## Setup Instructions
 
@@ -57,7 +55,7 @@ cd smart-doc-scanner
 ```bash
 python -m venv venv
 source venv/bin/activate        # On Linux/macOS
-venv\Scripts\activate           # On Windows
+venv\\Scripts\\activate           # On Windows
 ```
 
 ### Step 3: Install Dependencies
@@ -71,12 +69,12 @@ This installs NumPy and OpenCV (including the contrib modules for SIFT).
 ### Verify Installation
 
 ```bash
-python -c "import cv2; print(f'OpenCV version: {cv2.__version__}')"
+python -c "import cv2; print(f'OpenCV version: {cv2.\_\_version\_\_}')"
 ```
 
 You should see the OpenCV version printed without errors.
 
----
+\---
 
 ## How to Run
 
@@ -101,7 +99,7 @@ python main.py scan path/to/your/photo.jpg
 To specify a custom output directory:
 
 ```bash
-python main.py scan photo.jpg -o my_results/
+python main.py scan photo.jpg -o my\_results/
 ```
 
 ### Analyze Features and Segments
@@ -121,62 +119,136 @@ python main.py analyze demo
 
 Both commands accept `demo` as the image argument to use the built-in synthetic sample.
 
----
+\---
 
 ## Pipeline Description
 
 ### Phase 1: Document Scanning
 
-**Step 1 — Preprocessing (Module 1):** The input image is converted to grayscale and smoothed with a Gaussian blur. This removes high-frequency noise that would otherwise produce spurious edges in the next step. The Gaussian kernel size controls the trade-off between noise reduction and detail preservation.
+Step 1 — Preprocessing (Module 1) 
 
-**Step 2 — Edge Detection (Module 3):** Canny edge detection identifies pixels with strong gradient changes. The algorithm applies Sobel filters to compute gradient magnitude and direction, then uses non-maximum suppression to thin edges to single-pixel width, followed by hysteresis thresholding with dual thresholds to trace continuous edge chains.
 
-**Step 3 — Contour Detection (Module 3):** The edge map is searched for contours. Each contour is approximated as a polygon using the Douglas-Peucker algorithm. The system looks for the largest quadrilateral (4-sided polygon) that covers a significant portion of the image, which corresponds to the document boundary.
 
-**Step 4 — Perspective Transformation (Modules 1 & 2):** Once four corners are identified, a 3×3 homography matrix is computed that maps these corners to a rectangle. This projective transformation corrects for the perspective distortion inherent in photographing a flat document from an angle, producing a top-down "scanned" view.
+The input image is converted into grayscale and suppressed by Gaussian blur. This removes any high-frequency noise that would have otherwise produced spurious edges in the next step. The Gaussian kernel size is responsible for the noise-detail trade-off. 
 
-**Step 5 — Adaptive Thresholding (Module 1):** The rectified image is converted to a clean binary (black-on-white) scan. CLAHE (Contrast Limited Adaptive Histogram Equalization) improves contrast locally, then adaptive Gaussian thresholding binarizes the image using locally-computed thresholds, making the output robust to shadows and uneven illumination.
+
+
+Step 2 — Edge Detection (Module 3) 
+
+
+
+The canny edge detection calculates the pixels whose gradient change is above a certain threshold. Then, with the help of non-maximum suppression, Canny emphasizes the edges and minimizes them to one pixel, and finally, with the help of hysteresis with two thresholds, the final connected edge chain is selected. 
+
+
+
+Step 3 — Contour Detection (Module 3) 
+
+
+
+Contours are searched from the edge map. The contours are then approximated as polygons using the Douglas-Peucker algorithm. Finally, the Douglas-Peucker approximation polygons are inspected, and the largest quadrilateral encompassing most of the image is identified as the document boundary. 
+
+
+
+Step 4 — Perspective Transformation (Modules 1 \& 2) 
+
+
+
+Once that four corners are identified, a 3×3 homography matrix that maps these corner to a rectangle is computed. The projective transformation enables the perspective-corrected ‘scanning’ of a digital image of a document that is taken at an angle. 
+
+
+
+Step 5 — Adaptive Thresholding (Module 1) 
+
+
+
+After obtaining the rectified image, it is finally converted to a clean binary (black-on-white) scan. CLAHE (Contrast Limited Adaptive Histogram Equalization) first improved the contrast locally, and then the adaptive Gaussian thresholding binarized the image with locally-computed thresholds, making the output robust to shadows and uneven illumination. 
+
+\---
 
 ### Phase 2: Feature Extraction (Module 3)
 
-**ORB Features:** Detects corner-like keypoints using FAST and describes them with rotation-invariant BRIEF descriptors. The output shows keypoint locations with their scale and orientation.
+### 
 
-**SIFT Features:** Detects scale-invariant keypoints via Difference of Gaussians in scale space, then computes 128-dimensional gradient histogram descriptors. These are invariant to scale, rotation, and partially to illumination.
+**ORB Features** 
 
-**HOG Descriptor:** Computes the distribution of gradient orientations over a grid of cells, then normalizes over overlapping blocks. The resulting feature vector captures the overall shape structure of the document.
 
-**Harris Corners:** Computes a corner response function based on eigenvalues of the local structure tensor (gradient auto-correlation matrix). Points where both eigenvalues are large indicate corners.
 
-### Phase 3: Segmentation (Modules 3 & 4)
+**Detects corner-like keypoints using FAST, and the keypoints are described using rotation-invariant BRIEF descriptors. The output gives the location of keypoints with their scale and orientation.** 
 
-**K-Means Clustering:** Partitions pixels into k color clusters by iteratively assigning pixels to nearest centroids and recomputing centroids. For documents, this typically separates text, background, and graphical elements.
 
-**Watershed Segmentation:** Treats the image as a topographic surface and "floods" from foreground markers, building boundaries where different flood basins meet. This separates touching or overlapping regions.
 
-**Text Region Detection:** Uses adaptive thresholding, morphological closing (to merge individual characters into text blocks), and connected component analysis to locate and bound text regions with rectangles.
+**SIFT Features** 
 
----
+
+
+**Detects scale-invariant keypoints through Difference of Gaussians in scale space and corresponding descriptors consisting of 128-dimensional gradient histograms. These are scale, rotation, and partially illumination invariant.** 
+
+
+
+**HOG Descriptor** 
+
+
+
+**Computes the gradient orientation grid histograms, followed by normalization over overlapping blocks. Each corresponding feature vector thus represents the overall shape layout of the document.** 
+
+
+
+**Harris Corners** 
+
+
+
+**Its corner response function is computed based on eigenvalues of the local structure tensor (gradient auto-correlation matrix). It is only in locations where both eigenvalues are large that corners are detected.** 
+
+**---**
+
+### Phase 3: Segmentation (Modules 3 \& 4)
+
+
+
+**K-Means Clustering** 
+
+
+
+**It partitions pixels into k color clusters by iteratively assigning pixels to the nearest cluster centroids and recomputing the centroids. This typically distinguishes the text of a document, its background, and graphical elements.** 
+
+
+
+**Watershed Segmentation** 
+
+
+
+**Treats the image as a topographic surface and ‘floods’ from foreground markers, creating boundaries at points where different flood basins collide. This separates areas which are touching or intersecting.** 
+
+
+
+**Text Region Detection** 
+
+
+
+**It uses adaptive thresholding, morphological closing (which joins isolated letters into large text blocks) and connected component analysis to identify text areas and enclose them in rectangular regions.** 
+
+\---
 
 ## Course Concepts Applied
 
-| Module | Concept | Where Applied |
-|--------|---------|---------------|
-| Module 1 | Gaussian Filtering, Convolution | Preprocessing stage |
-| Module 1 | Histogram Processing (CLAHE) | Contrast enhancement |
-| Module 1 | Image Enhancement, Restoration | Adaptive thresholding |
-| Module 1 | Projective Transformation | Perspective warp |
-| Module 1 | Morphological Operations | Text block merging |
-| Module 2 | Homography | getPerspectiveTransform |
-| Module 3 | Canny Edge Detection | Edge map computation |
-| Module 3 | Harris Corner Detection | Feature extraction |
-| Module 3 | SIFT, DOG, Scale-Space | Feature extraction |
-| Module 3 | HOG | Shape descriptor |
-| Module 3 | Region Growing | Segmentation |
-| Module 4 | K-Means Clustering | Color segmentation |
-| Module 4 | Watershed Segmentation | Region segmentation |
-| Module 4 | Object Detection | Text region detection |
+|Module|Concept|Where Applied|
+|-|-|-|
+|Module 1|Gaussian Filtering, Convolution|Preprocessing stage|
+|Module 1|Histogram Processing (CLAHE)|Contrast enhancement|
+|Module 1|Image Enhancement, Restoration|Adaptive thresholding|
+|Module 1|Projective Transformation|Perspective warp|
+|Module 1|Morphological Operations|Text block merging|
+|Module 2|Homography|getPerspectiveTransform|
+|Module 3|Canny Edge Detection|Edge map computation|
+|Module 3|Harris Corner Detection|Feature extraction|
+|Module 3|SIFT, DOG, Scale-Space|Feature extraction|
+|Module 3|HOG|Shape descriptor|
+|Module 3|Region Growing|Segmentation|
+|Module 4|K-Means Clustering|Color segmentation|
+|Module 4|Watershed Segmentation|Region segmentation|
+|Module 4|Object Detection|Text region detection|
 
----
+\---
 
 ## Output Examples
 
@@ -184,25 +256,25 @@ After running `python main.py demo`, the `output/` directory will contain:
 
 ```
 output/
-├── sample_input.jpg           # Generated synthetic document photo
+├── sample\_input.jpg           # Generated synthetic document photo
 ├── scan/
-│   ├── 01_detected_contour.jpg   # Original with green boundary overlay
-│   ├── 02_edges.jpg              # Canny edge map
-│   ├── 03_preprocessed.jpg       # Grayscale + Gaussian blur
-│   ├── 04_warped_color.jpg       # Perspective-corrected color image
-│   ├── 05_final_scan.jpg         # Clean binary scan output
-│   ├── scanned_color.jpg         # Final color scan
-│   └── scanned_binary.jpg        # Final binary scan
+│   ├── 01\_detected\_contour.jpg   # Original with green boundary overlay
+│   ├── 02\_edges.jpg              # Canny edge map
+│   ├── 03\_preprocessed.jpg       # Grayscale + Gaussian blur
+│   ├── 04\_warped\_color.jpg       # Perspective-corrected color image
+│   ├── 05\_final\_scan.jpg         # Clean binary scan output
+│   ├── scanned\_color.jpg         # Final color scan
+│   └── scanned\_binary.jpg        # Final binary scan
 └── analysis/
-    ├── features_orb.jpg          # ORB keypoints visualization
-    ├── features_sift.jpg         # SIFT keypoints visualization
-    ├── features_harris.jpg       # Harris corners visualization
-    ├── seg_kmeans.jpg            # K-Means color segmentation
-    ├── seg_watershed.jpg         # Watershed boundaries
-    └── seg_text_regions.jpg      # Detected text regions with bounding boxes
+    ├── features\_orb.jpg          # ORB keypoints visualization
+    ├── features\_sift.jpg         # SIFT keypoints visualization
+    ├── features\_harris.jpg       # Harris corners visualization
+    ├── seg\_kmeans.jpg            # K-Means color segmentation
+    ├── seg\_watershed.jpg         # Watershed boundaries
+    └── seg\_text\_regions.jpg      # Detected text regions with bounding boxes
 ```
 
----
+\---
 
 ## Project Structure
 
@@ -212,7 +284,7 @@ smart-doc-scanner/
 ├── requirements.txt           # Python dependencies
 ├── README.md                  # This file
 ├── src/
-│   ├── __init__.py
+│   ├── \_\_init\_\_.py
 │   ├── scanner.py             # Core scanning pipeline (Modules 1, 2)
 │   ├── features.py            # Feature extraction (Module 3)
 │   ├── segmentation.py        # Segmentation algorithms (Modules 3, 4)
@@ -221,7 +293,7 @@ smart-doc-scanner/
 └── output/                    # Generated outputs (created at runtime)
 ```
 
----
+\---
 
 ## Troubleshooting
 
@@ -231,8 +303,9 @@ smart-doc-scanner/
 
 **Low keypoint count** — Very small or low-contrast images may yield few keypoints. Try providing a higher-resolution input image.
 
----
+\---
 
 ## License
 
 This project is developed as a course project for CSE3010 — Computer Vision. It is intended for educational purposes.
+
